@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="fufillment">
+    <global-element type="http://www.mulesoft.org/schema/mule/sfdc/config" name="SalesForce Configuration" entity-id="bb72ac20-ca5d-49ad-90dc-0ce92102c990">
+        <properties>
+            <property value="sfconfig" name="name"/>
+            <property value="${sfdc.user.name}" name="username"/>
+            <property value="${sfdc.pwd}" name="password"/>
+            <property value="${sfdc.security.token}" name="securityToken"/>
+            <property name="url"/>
+            <property name="proxyHost"/>
+            <property name="proxyPort"/>
+            <property name="proxyUsername"/>
+            <property name="proxyPassword"/>
+        </properties>
+        <description>Global configuration for Salesforce operations</description>
+    </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/cxf/configuration" name="CXF Configuration" entity-id="e1515fd2-3a63-4f39-ad2a-8904a9583c88">
+        <properties>
+            <property name="configurationLocation"/>
+            <property name="enableMuleSoapHeaders"/>
+            <property value="false" name="initializeStaticBusInstance"/>
+        </properties>
+        <description>Global CXF Configuration</description>
+    </global-element>
+    <global-element type="http://www.mulesoft.org/schema/mule/twilio/config" name="Twilio_Config" entity-id="98a5278f-c9e5-46aa-8047-2f5d41545eaf">
+        <properties>
+            <property value="Twilio_Config" name="name"/>
+            <property value="${twilio.account.sid}" name="accountSid"/>
+            <property value="${twilio.auth.token}" name="authToken"/>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="fulfillment">
+        <properties>
+            <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
+        </properties>
+        <lane entity-id="21228d52-9635-4378-b532-0f8f9a765db8">
+            <endpoint message-exchange-pattern="OneWay" direction="Inbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="HTTP" entity-id="a7c2dac7-f991-4ea4-8f20-3cf0bbe1db47">
+                <properties>
+                    <property value="one-way" name="exchange-pattern"/>
+                    <property value="request-response" name="exchange-pattern"/>
+                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="httpLabel"/>
+                    <property value="localhost" name="host"/>
+                    <property value="${http.port}" name="port"/>
+                    <property value="order" name="path"/>
+                    <property name="method"/>
+                    <property name="address"/>
+                    <property name="responseTimeout"/>
+                    <property name="encoding"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="mimeType"/>
+                    <property name="followRedirects"/>
+                    <property name="ref"/>
+                    <property name="connector-ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="user"/>
+                    <property name="password"/>
+                    <property name="contentType"/>
+                    <property name="keep-alive"/>
+                </properties>
+                <description>Process HTTP reqests or responses.</description>
+            </endpoint>
+            <pattern type="http://www.mulesoft.org/schema/mule/cxf/soapComponent" name="SOAP" entity-id="e48550d6-aff6-4eec-a0aa-f032c664725b">
+                <properties>
+                    <property name="configuration-ref"/>
+                    <property value="http://www.mulesoft.org/schema/mule/cxf/jaxws-service" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+                    <property name="configuration-ref"/>
+                    <property name="bindingId"/>
+                    <property value="80" name="port"/>
+                    <property name="namespace"/>
+                    <property name="service"/>
+                    <property value="org.ordermgmt.IProcessOrder" name="serviceClass"/>
+                    <property name="validationEnabled"/>
+                    <property name="mtomEnabled"/>
+                    <property name="wsdlLocation"/>
+                    <property value="false" name="enableMuleSoapHeaders"/>
+                </properties>
+                <description>Make a web service available via CXF</description>
+            </pattern>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/component" name="Process Order" entity-id="d67249b4-8ad1-4b6e-8151-bd9750ad36d8">
+                <properties>
+                    <property value="org.ordermgmt.ProcessOrderImpl" name="class"/>
+                </properties>
+                <description>Invoke a Java component</description>
+            </pattern>
+            <scope type="http://www.mulesoft.org/schema/mule/core/async" name="Async" entity-id="09c2aea5-b436-4bc2-b2f1-d4f4d07b1352">
+                <properties>
+                    <property name="processingStrategy"/>
+                </properties>
+                <description>Asynchronous block of execution</description>
+                <compartment entity-id="761ff835-65af-4901-b04d-d2d6293a170f">
+                    <lane entity-id="6201282f-b4f8-4ef7-86db-d1ee94899e4b">
+                        <splitter type="org.mule.tooling.ui.modules.core.pattern.all" name="All" entity-id="43cd709a-8ba1-42bb-8936-597711e76740">
+                            <pattern type="org.mule.tooling.ui.modules.core.pattern.all" name="All" entity-id="858bb149-7c5e-4119-939e-eddf3ab1491b"/>
+                            <compartment entity-id="eaba7f51-fa76-44b0-97c0-3541ad5a64a7">
+<lane entity-id="893f6a76-b52e-4670-a220-25c318306c7a">
+    <pattern type="http://www.mulesoft.org/schema/mule/sfdc/sfdc-connector" name="Add Customer to Salesforce" entity-id="6ea21094-3f38-46bd-8401-e0ce05cc5446">
+        <properties>
+            <property value="" name=""/>
+            <property value="" name="username"/>
+            <property value="" name="securityToken"/>
+            <property value="http://www.mulesoft.org/schema/mule/sfdc/create-single" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+            <property value="Contact" name="type"/>
+            <property value="" name="password"/>
+            <property value="sfconfig" name="config-ref"/>
+            <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object;843298197">
+                <property value="true" name="isProcessed$$$$"/>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object-each;1336651978">
+                    <property value="#[groovy:payload.customer.title]" name="value"/>
+                    <property value="Title" name="key"/>
+                    <property value="true" name="isProcessed$$$$"/>
+                </property-collection>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object-each;1893978628">
+                    <property value="#[groovy:payload.customer.phoneNumber]" name="value"/>
+                    <property value="Phone" name="key"/>
+                    <property value="true" name="isProcessed$$$$"/>
+                </property-collection>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object-each;1">
+                    <property value="#[groovy:payload.customer.firstName]" name="value"/>
+                    <property value="FirstName" name="key"/>
+                    <property value="true" name="isProcessed$$$$"/>
+                </property-collection>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object-each;2">
+                    <property value="#[groovy:payload.customer.lastName]" name="value"/>
+                    <property value="LastName" name="key"/>
+                    <property value="true" name="isProcessed$$$$"/>
+                </property-collection>
+                <property-collection name="@http://www.mulesoft.org/schema/mule/sfdc/create-single-object-each;1091847640">
+                    <property value="#[groovy:payload.customer.email]" name="value"/>
+                    <property value="Email" name="key"/>
+                    <property value="true" name="isProcessed$$$$"/>
+                </property-collection>
+            </property-collection>
+        </properties>
+        <description>Creates a Salesforce contact for the person placing the order.</description>
+    </pattern>
+</lane>
+<lane entity-id="d4866dbd-4202-4b5f-9b75-fff7eb8bf44e">
+    <pattern type="http://www.mulesoft.org/schema/mule/twilio/twilio-connector" name="Send SMS to Account Exec" entity-id="57f092f5-711a-4a3f-8856-225a17ef16a2">
+        <properties>
+            <property value="Twilio_Config" name="config-ref"/>
+            <property value="http://www.mulesoft.org/schema/mule/twilio/send-sms-message" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
+            <property value="Twilio_Config" name="config-ref"/>
+            <property name="accountSid"/>
+            <property value="#[groovy:payload.customer.firstName] #[groovy:payload.customer.lastName] has just placed an order and been added to your SalesForce contacts." name="body"/>
+            <property value="${twilio.phone.number.from}" name="from"/>
+            <property value="${twilio.phone.number.to}" name="to"/>
+            <property name="status-callback-flow-ref"/>
+            <property value="${twilio.application.sid}" name="applicationSid"/>
+        </properties>
+    </pattern>
+</lane>
+                            </compartment>
+                        </splitter>
+                    </lane>
+                </compartment>
+            </scope>
+        </lane>
+    </flow>
+</mule-configuration>

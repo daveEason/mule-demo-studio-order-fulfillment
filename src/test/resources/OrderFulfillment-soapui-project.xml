@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="OrderFulfillment" resourceRoot="" soapui-version="3.6.1" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="IProcessOrderServiceSoapBinding" type="wsdl" bindingName="{http://ordermgmt.org/}IProcessOrderServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:1080/order?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:1080/order?wsdl"><con:part><con:url>http://localhost:1080/order?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="IProcessOrderService" targetNamespace="http://ordermgmt.org/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ordermgmt.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ordermgmt.org/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="order" type="tns:order"/>
+      <xs:element name="orderItem" type="tns:orderItem"/>
+      <xs:element name="processOrder" type="tns:processOrder"/>
+      <xs:element name="processOrderResponse" type="tns:processOrderResponse"/>
+      <xs:complexType name="processOrder">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="order" type="tns:order"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="order">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="orderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="customer" type="tns:orderPerson"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="tns:orderItem"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="orderPerson">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="city" type="xs:string"/>
+          <xs:element minOccurs="0" name="companyName" type="xs:string"/>
+          <xs:element minOccurs="0" name="email" type="xs:string"/>
+          <xs:element minOccurs="0" name="firstName" type="xs:string"/>
+          <xs:element minOccurs="0" name="lastName" type="xs:string"/>
+          <xs:element minOccurs="0" name="phoneNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="state" type="xs:string"/>
+          <xs:element minOccurs="0" name="title" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="orderItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="manufacturer" type="xs:string"/>
+          <xs:element minOccurs="0" name="name" type="xs:string"/>
+          <xs:element name="price" type="xs:float"/>
+          <xs:element minOccurs="0" name="productId" type="xs:string"/>
+          <xs:element name="quantity" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="processOrderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="summary" type="tns:order"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="processOrderResponse">
+    <wsdl:part element="tns:processOrderResponse" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="processOrder">
+    <wsdl:part element="tns:processOrder" name="parameters"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="IProcessOrder">
+    <wsdl:operation name="processOrder">
+      <wsdl:input message="tns:processOrder" name="processOrder"></wsdl:input>
+      <wsdl:output message="tns:processOrderResponse" name="processOrderResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="IProcessOrderServiceSoapBinding" type="tns:IProcessOrder">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="processOrder">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="processOrder">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="processOrderResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="IProcessOrderService">
+    <wsdl:port binding="tns:IProcessOrderServiceSoapBinding" name="IProcessOrderPort">
+      <soap:address location="http://localhost:1080/order"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:1080/order</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="processOrder" bindingOperationName="processOrder" type="Request-Response" outputName="processOrderResponse" inputName="processOrder" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:1080/order</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://ordermgmt.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ord:processOrder>
+         <order>
+            <orderId>0001976</orderId>
+            <customer>
+               <city>San Francisco</city>
+               <companyName>SomeCompany</companyName>
+               <email>david.eason@somecompany.com</email>
+               <firstName>David</firstName>
+               <lastName>Eason</lastName>
+               <phoneNumber>+18089547658</phoneNumber>
+               <state>CA</state>
+               <title>CEO</title>
+            </customer>
+            <item>
+               <manufacturer>SONY</manufacturer>
+               <name>Wireless Router</name>
+               <price>150</price>
+               <productId>SONY-WR-543</productId>
+               <quantity>5</quantity>
+            </item>
+         </order>
+      </ord:processOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://ordermgmt.org/IProcessOrder/processOrder"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="IProcessOrderServiceSoapBinding TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="processOrder TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="processOrder"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>IProcessOrderServiceSoapBinding</con:interface><con:operation>processOrder</con:operation><con:request name="processOrder"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:1080/order</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://ordermgmt.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ord:processOrder>
+         <!--Optional:-->
+         <order>
+            <!--Optional:-->
+            <orderId>?</orderId>
+            <!--Optional:-->
+            <customer>
+               <!--Optional:-->
+               <city>?</city>
+               <!--Optional:-->
+               <companyName>?</companyName>
+               <!--Optional:-->
+               <email>?</email>
+               <!--Optional:-->
+               <firstName>?</firstName>
+               <!--Optional:-->
+               <lastName>?</lastName>
+               <!--Optional:-->
+               <phoneNumber>?</phoneNumber>
+               <!--Optional:-->
+               <state>?</state>
+               <!--Optional:-->
+               <title>?</title>
+            </customer>
+            <!--Zero or more repetitions:-->
+            <item>
+               <!--Optional:-->
+               <manufacturer>?</manufacturer>
+               <!--Optional:-->
+               <name>?</name>
+               <price>?</price>
+               <!--Optional:-->
+               <productId>?</productId>
+               <quantity>?</quantity>
+            </item>
+         </order>
+      </ord:processOrder>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig action="http://ordermgmt.org/IProcessOrder/processOrder"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/></con:soapui-project>

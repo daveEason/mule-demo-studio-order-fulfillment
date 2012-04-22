@@ -1,0 +1,31 @@
+This is a simple Mule Studio project that illustrates a SOAP (CXF) WebServices, Twilio & SFDC integration using a simple (too simple) Order Fulfillment use case.
+
+---------------------
+PRE-REQUISITES:
+
+In order to test this application you will need both an SFDC and TWILIO accounts:
+
+- SFDC account, free developer accounts can be requested from http://www.salesforce.com/
+
+- TWILIO account, a paid Twilio account will be required for the Send SMS function from http://www.twilio.com/
+
+- The file 'src/main/app/mule-app.properties' must be configured with your SFDC & Twilio account details (see template provided).
+
+---------------------
+IMPORT:
+
+To begin working with this project in Mule Studio:
+
+- After you have cloned the repository from gitHub to a local directory
+
+- Import the project to Mule Studio via "File > Import > Mule > Mule Studio Project from External Location" (and follow the prompts)
+
+---------------------
+TESTING:
+A SoapUI (3.6.1) project has been included for testing this application in the 'src/test/resources' directory named:
+
+"OrderFulfillment-soapui-project.xml"
+
+---------------
+---------------
+More information about Mulesoft can be found at mulesoft.com (Enterprise) OR mulesoft.org (Community).

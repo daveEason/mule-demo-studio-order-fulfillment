@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:twilio="http://www.mulesoft.org/schema/mule/twilio" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:salesforce="http://www.mulesoft.org/schema/mule/sfdc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="CE-3.2.1" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/twilio http://www.mulesoft.org/schema/mule/twilio/1.0/mule-twilio.xsd 
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/4.0/mule-sfdc.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/4.0/mule-sfdc.xsd ">
+    <sfdc:config name="sfconfig" username="${sfdc.user.name}" password="${sfdc.pwd}" securityToken="${sfdc.security.token}" doc:name="SalesForce Configuration" doc:description="Global configuration for Salesforce operations"/>
+    <cxf:configuration initializeStaticBusInstance="false" doc:name="CXF Configuration" doc:description="Global CXF Configuration"/>
+    <twilio:config name="Twilio_Config" accountSid="${twilio.account.sid}" authToken="${twilio.auth.token}" doc:name="Twilio_Config"/>
+    <flow name="fulfillment" doc:name="fulfillment">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="${http.port}" path="order" doc:name="HTTP" doc:description="Process HTTP reqests or responses."/>
+        <cxf:jaxws-service port="80" serviceClass="org.ordermgmt.IProcessOrder" enableMuleSoapHeaders="false" doc:name="SOAP" doc:description="Make a web service available via CXF"/>
+        <component class="org.ordermgmt.ProcessOrderImpl" doc:name="Process Order" doc:description="Invoke a Java component"/>
+        <async doc:name="Async" doc:description="Asynchronous block of execution">
+            <all doc:name="All">
+                <processor-chain>
+                    <sfdc:create-single config-ref="sfconfig" type="Contact" doc:name="Add Customer to Salesforce" doc:description="Creates a Salesforce contact for the person placing the order.">
+                        <sfdc:object>
+                            <sfdc:object key="Title">#[groovy:payload.customer.title]</sfdc:object>
+                            <sfdc:object key="Phone">#[groovy:payload.customer.phoneNumber]</sfdc:object>
+                            <sfdc:object key="FirstName">#[groovy:payload.customer.firstName]</sfdc:object>
+                            <sfdc:object key="LastName">#[groovy:payload.customer.lastName]</sfdc:object>
+                            <sfdc:object key="Email">#[groovy:payload.customer.email]</sfdc:object>
+                        </sfdc:object>
+                    </sfdc:create-single>
+                </processor-chain>
+                <processor-chain>
+                    <twilio:send-sms-message config-ref="Twilio_Config" body="#[groovy:payload.customer.firstName] #[groovy:payload.customer.lastName] has just placed an order and been added to your SalesForce contacts." from="${twilio.phone.number.from}" to="${twilio.phone.number.to}" applicationSid="${twilio.application.sid}" doc:name="Send SMS to Account Exec"/>
+                </processor-chain>
+            </all>
+        </async>
+    </flow>
+</mule>
